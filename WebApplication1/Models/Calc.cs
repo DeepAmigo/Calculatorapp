@@ -18,7 +18,7 @@ namespace WebApplication1.Models
             get;
             set;
         }
-        public double Result
+        public string Result
         {
             get;
             set;

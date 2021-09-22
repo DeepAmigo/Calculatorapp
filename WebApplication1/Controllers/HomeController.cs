@@ -1,6 +1,11 @@
 ﻿using System.Web.Mvc;
 using WebApplication1.Models;
 using CalculatorLib;
+using System.Net.Http;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
@@ -32,26 +37,63 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public ActionResult Calculator(Calc model, string command)
+        public async Task<ActionResult> Calculator(Calc model, string command)
         {
-          Calculator clac = new Calculator();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44358/");
+
+            Calculator clac = new Calculator();
             if (command == "add")
             {
-                
-                model.Result = clac.Add( model.A ,model.B);
+                    var response = await client.GetAsync(string.Format("Calculator/Add?value1={0}&value2={1}", model.A, model.B));
+
+
+                    //To store result of web api response.   
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        model.Result = result;
+                    }
+                    
             }
             if (command == "sub")
             {
-                model.Result = clac.Subtract(model.A, model.B);
-            }
+                    var response = await client.GetAsync(string.Format("Calculator/Sub?value1={0}&value2e={1}", model.A, model.B));
+
+
+                    //To store result of web api response.   
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        model.Result = result;
+                    }
+                }
             if (command == "mul")
             {
-                model.Result = clac.Multiply(model.A, model.B);
-            }
+                    var response = await client.GetAsync(string.Format("Calculator/Mul?value1={0}&value2e={1}", model.A, model.B));
+
+
+                    //To store result of web api response.   
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        model.Result = result;
+                    }
+                }
             if (command == "div")
             {
-                model.Result = clac.Division(model.A, model.B);
-            }
+                    var response = await client.GetAsync(string.Format("Calculator/Div?value1={0}&value2e={1}", model.A, model.B));
+
+
+                    //To store result of web api response.   
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        model.Result = result;
+                    }
+                }
+        }
             return View(model);
         }
     }
